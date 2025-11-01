@@ -21,7 +21,8 @@ import {
   Zap,
   CheckCircle,
   Plus,
-  X
+  X,
+  Star
 } from "lucide-react";
 
 export default function EditBlog() {
@@ -40,6 +41,7 @@ export default function EditBlog() {
   const [publishDate, setPublishDate] = useState(new Date().toISOString().split('T')[0]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [fetchingBlog, setFetchingBlog] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Fetch categories from Firebase
   useEffect(() => {
@@ -78,6 +80,7 @@ export default function EditBlog() {
           setCategory(data.category || "");
           setImage(data.image);
           setContent(data.content);
+          setIsFavorite(data.isFavorite || false);
           if (data.publishedAt?.toDate) {
             setPublishDate(data.publishedAt.toDate().toISOString().split('T')[0]);
           }
@@ -203,6 +206,7 @@ export default function EditBlog() {
         category: finalCategory,
         image,
         content,
+        isFavorite, // Add favorite status
         publishedAt: new Date(publishDate),
         updatedAt: serverTimestamp(),
       });
@@ -230,6 +234,11 @@ export default function EditBlog() {
         alert("Failed to add category. Please try again.");
       }
     }
+  };
+
+  // Function to toggle favorite status
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
   };
 
   if (fetchingBlog) {
@@ -276,13 +285,20 @@ export default function EditBlog() {
             </div>
 
             <div className="flex items-center gap-1 sm:gap-3">
+              {/* Favorite Toggle Button */}
               <button
-                onClick={() => alert("Changes saved successfully!")}
-                className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2.5 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg sm:rounded-xl font-medium transition-all text-sm sm:text-base"
+                onClick={toggleFavorite}
+                className={`p-2 rounded-lg transition-all duration-200 ${
+                  isFavorite 
+                    ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' 
+                    : 'text-gray-400 hover:text-amber-500 hover:bg-amber-50'
+                }`}
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
               >
-                <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Save Draft</span>
+                <Star className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
+              
+             
               
               <button
                 onClick={handleUpdate}
@@ -534,6 +550,19 @@ export default function EditBlog() {
               </h3>
               
               <div className="space-y-4 sm:space-y-6">
+                {/* Favorite Status */}
+                <div>
+                  <p className="text-sm text-gray-500 mb-2 font-medium">Favorite Status</p>
+                  <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border ${
+                    isFavorite 
+                      ? 'bg-amber-50 text-amber-700 border-amber-200' 
+                      : 'bg-gray-50 text-gray-600 border-gray-200'
+                  }`}>
+                    <Star className={`w-3 h-3 ${isFavorite ? 'fill-current' : ''}`} />
+                    {isFavorite ? 'Featured Post' : 'Regular Post'}
+                  </div>
+                </div>
+
                 <div>
                   <p className="text-sm text-gray-500 mb-2 font-medium">Title</p>
                   <p className="text-sm sm:text-base font-semibold text-gray-900 line-clamp-2 bg-amber-50 p-3 rounded-lg border border-amber-200">
@@ -600,6 +629,7 @@ export default function EditBlog() {
                   <ChecklistItem checked={!!content} label="Write story content" />
                   <ChecklistItem checked={!!category} label="Choose category" />
                   <ChecklistItem checked={!!excerpt} label="Add excerpt (optional)" />
+                  <ChecklistItem checked={isFavorite} label="Mark as favorite (optional)" />
                 </div>
               </div>
 
@@ -642,6 +672,12 @@ export default function EditBlog() {
                     <span className="text-xs font-semibold text-amber-600">3</span>
                   </div>
                   <p>Proofread content for typos and flow</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-semibold text-amber-600">4</span>
+                  </div>
+                  <p>Mark exceptional posts as favorites for featured display</p>
                 </div>
               </div>
             </div>

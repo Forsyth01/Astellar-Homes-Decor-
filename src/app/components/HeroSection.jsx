@@ -20,17 +20,17 @@ export const HeroSection = ({ scrollY }) => {
             transform: `translateY(${scrollY * 0.3}px)`
           }}
         >
-          <div className="absolute -top-18 left-10 animate-float">
+          <div className="hidden md:absolute -top-16 left-10 animate-float">
             <div className="bg-gradient-to-br from-amber-100 to-orange-100 p-4 rounded-2xl shadow-xl">
               <Home className="text-amber-600" size={32} />
             </div>
           </div>
-          <div className="absolute -top-10 right-20 animate-float-delayed">
+          <div className="hidden md:absolute -top-10 right-20 animate-float-delayed">
             <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-4 rounded-2xl shadow-xl">
               <Leaf className="text-emerald-600" size={32} />
             </div>
           </div>
-          <div className="absolute top-40 -right-10 animate-float">
+          <div className="hidden md:absolute top-40 -right-10 animate-float">
             <div className="bg-gradient-to-br from-blue-100 to-indigo-100 p-4 rounded-2xl shadow-xl">
               <Heart className="text-blue-600" size={32} />
             </div>

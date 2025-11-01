@@ -139,11 +139,7 @@ export default function AdminPage() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <button className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all font-medium text-sm sm:text-base">
-                <Download className="w-4 h-4" />
-                Export
-              </button>
-              
+                     
               <Link
                 href="/admin/create"
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all hover:shadow-lg transform hover:-translate-y-0.5 shadow-lg shadow-blue-500/30 text-sm sm:text-base"
@@ -176,7 +172,7 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+          {/* <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1">Total Views</p>
@@ -190,9 +186,9 @@ export default function AdminPage() {
                 <Users className="w-4 h-4 sm:w-6 sm:h-6 text-green-600" />
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
+          {/* <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-xs sm:text-sm font-medium mb-1">Reading Time</p>
@@ -206,7 +202,7 @@ export default function AdminPage() {
                 <BookOpen className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">

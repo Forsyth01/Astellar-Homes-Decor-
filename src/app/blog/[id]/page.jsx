@@ -174,7 +174,7 @@ export default function BlogDetails() {
 
           {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-6 py-6 border-y border-gray-200">
-            <div className="flex items-center gap-4">
+            {/* <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-semibold">
                   <User className="w-5 h-5" />
@@ -184,7 +184,7 @@ export default function BlogDetails() {
                   <p className="text-gray-600 text-sm">Interior Design Experts</p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-4 text-gray-600">
               <div className="flex items-center gap-2">

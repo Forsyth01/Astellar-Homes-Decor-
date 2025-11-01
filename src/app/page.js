@@ -7,7 +7,7 @@ import { FloatingOrbs } from './components/FloatingOrbs';
 import { HeroSection } from './components/HeroSection';
 import { FeaturedSection } from './components/FeaturedSection';
 import { BlogPostsSection } from './components/BlogPostsSection';
-import { CTASection } from './components/CTASection';
+import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import Navbar from './components/Navbar';
 
@@ -38,7 +38,7 @@ const ModernFurnitureBlog = () => {
       <HeroSection scrollY={scrollY} />
       <FeaturedSection />
       <BlogPostsSection />
-      <CTASection />
+      <Contact />
       <Footer />
 
       <style jsx>{`

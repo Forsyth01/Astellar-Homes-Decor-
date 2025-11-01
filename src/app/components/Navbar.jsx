@@ -103,7 +103,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link 
             href="/" 
-            className="flex items-center space-x-3 group relative z-10"
+            className="flex items-center space-x-3 p relative z-10"
           >
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -115,7 +115,7 @@ export default function Navbar() {
                 alt="Astellar Homes & Decor"
                 className="h-30 md:h-35 transition-all duration-300"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 to-orange-500/0 group-hover:from-amber-400/10 group-hover:to-orange-500/10 rounded-lg transition-all duration-300" />
+              <div className="" />
             </motion.div>
           </Link>
 
@@ -277,22 +277,22 @@ export default function Navbar() {
 
             {/* Contact Link */}
             <Link
-              href="/contact"
+              href="/#contact"
               className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 group
                 ${
-                  isActive("/contact")
+                  isActive("/#contact")
                     ? "text-amber-700 bg-amber-50/80"
                     : "text-gray-600 hover:text-amber-700 hover:bg-white/50"
                 }`}
             >
               <span className={`transition-colors duration-300 ${
-                isActive("/contact") ? "text-amber-600" : "text-gray-400 group-hover:text-amber-500"
+                isActive("/#contact") ? "text-amber-600" : "text-gray-400 group-hover:text-amber-500"
               }`}>
                 <Phone className="w-4 h-4" />
               </span>
               Contact
               
-              {isActive("/contact") && (
+              {isActive("/#contact") && (
                 <motion.div
                   layoutId="desktop-active-indicator-contact"
                   className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-100/50 to-orange-100/30 border border-amber-200/50 -z-10"

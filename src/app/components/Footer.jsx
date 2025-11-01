@@ -11,6 +11,7 @@ export const Footer = () => {
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="text-amber-500" size={32} />
               <span className="text-2xl font-bold">Astellar</span>
+              <span className="">Homes & Decor</span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-6">
               Creating beautiful, comfortable spaces that feel like home. Design meets everyday life with warmth and inspiration.

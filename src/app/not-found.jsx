@@ -31,7 +31,7 @@ export default function NotFound() {
               transition={{ delay: 0.5 }}
               className="absolute -top-4 -right-4"
             >
-              <Sparkles className="w-12 h-12 text-amber-500 animate-pulse" />
+              {/* <Sparkles className="w-12 h-12 text-amber-500 animate-pulse" /> */}
             </motion.div>
           </div>
 
