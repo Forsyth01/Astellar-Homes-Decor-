@@ -1,16 +1,16 @@
 // ===== components/BlogPage.jsx =====
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight, Search, X, Filter, Sparkles, Home, TrendingUp, Heart } from "lucide-react";
-import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
+import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight, Search, X, Filter, Sparkles } from "lucide-react";
 
-export default function BlogPage() {
+// Create a client component that uses useSearchParams
+function BlogContent() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +19,6 @@ export default function BlogPage() {
   const blogsPerPage = 9;
 
   const searchParams = useSearchParams();
-  const router = useRouter();
   const categoryFromUrl = searchParams.get('category');
   const searchFromUrl = searchParams.get('search');
 
@@ -43,24 +42,16 @@ export default function BlogPage() {
     fetchBlogs();
   }, []);
 
-  // Handle URL parameters on component mount and when they change
+  // Handle URL parameters
   useEffect(() => {
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
-      // Update URL to remove category parameter after applying
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete('category');
-      router.replace(`/blog?${newParams.toString()}`, { scroll: false });
     }
     
     if (searchFromUrl) {
       setSearchQuery(searchFromUrl);
-      // Update URL to remove search parameter after applying
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete('search');
-      router.replace(`/blog?${newParams.toString()}`, { scroll: false });
     }
-  }, [categoryFromUrl, searchFromUrl, searchParams, router]);
+  }, [categoryFromUrl, searchFromUrl]);
 
   // Extract unique categories from ALL blogs (not filtered ones)
   const categories = useMemo(() => {
@@ -150,17 +141,6 @@ export default function BlogPage() {
 
   const headerContent = getHeaderContent();
 
-  // Get appropriate icon for category
-  const getCategoryIcon = (category) => {
-    const icons = {
-      'Home Decor': Home,
-      'Trending': TrendingUp,
-      'Lifestyle': Heart,
-    };
-    
-    return icons[category] || Sparkles;
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50">
@@ -207,11 +187,7 @@ export default function BlogPage() {
 
           {/* Quick Stats */}
           {(searchQuery || selectedCategory !== "all") && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-6 mt-8 text-sm text-gray-600"
-            >
+            <div className="flex items-center justify-center gap-6 mt-8 text-sm text-gray-600">
               <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200">
                 <Sparkles className="w-4 h-4 text-amber-600" />
                 {filteredBlogs.length} {filteredBlogs.length === 1 ? 'story' : 'stories'}
@@ -222,7 +198,7 @@ export default function BlogPage() {
                   {selectedCategory}
                 </div>
               )}
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
@@ -273,14 +249,11 @@ export default function BlogPage() {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300 text-gray-900 appearance-none cursor-pointer pr-10"
                 >
-                  {categories.map(category => {
-                    const IconComponent = getCategoryIcon(category);
-                    return (
-                      <option key={category} value={category}>
-                        {category === "all" ? "All Categories" : category}
-                      </option>
-                    );
-                  })}
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category === "all" ? "All Categories" : category}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -359,9 +332,6 @@ export default function BlogPage() {
                 <Link key={blog.id} href={`/blog/${blog.id}`}>
                   <article 
                     className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-amber-200 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 shadow-sm hover:shadow-2xl"
-                    style={{
-                      animationDelay: `${index * 100}ms`
-                    }}
                   >
                     {/* Image Container */}
                     <div className="relative w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -505,5 +475,24 @@ export default function BlogPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main BlogPage component with Suspense boundary
+export default function BlogPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 via-white to-orange-50">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-amber-200 rounded-full"></div>
+            <div className="w-20 h-20 border-4 border-amber-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+          </div>
+          <p className="text-gray-600 text-lg mt-4 font-light">Loading blog...</p>
+        </div>
+      </div>
+    }>
+      <BlogContent />
+    </Suspense>
   );
 }
