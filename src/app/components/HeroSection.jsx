@@ -41,7 +41,7 @@ export const HeroSection = ({ scrollY }) => {
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tighter tracking-tight">
-            <span className="bg-gradient-to-r leading-tight md:leading-normal md:tracking-normal tracking-tighter from-gray-900 via-amber-900 to-orange-900 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r leading-tighter md:leading-normal md:tracking-normal tracking-tighter from-gray-900 via-amber-900 to-orange-900 bg-clip-text text-transparent">
               Beautiful Spaces
             </span>
             <br />
