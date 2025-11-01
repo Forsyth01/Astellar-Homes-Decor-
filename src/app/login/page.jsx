@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Lock, Mail, Home, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Navbar from '../components/Navbar';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -40,6 +41,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Header */}
@@ -159,5 +162,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
