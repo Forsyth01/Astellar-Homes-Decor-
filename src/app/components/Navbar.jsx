@@ -113,7 +113,7 @@ export default function Navbar() {
               <img
                 src="/Astellar_Homes_Logo.png"
                 alt="Astellar Homes & Decor"
-                className="h-30 md:h-35 transition-all duration-300"
+                className="h-35 md:h-35 transition-all duration-300"
               />
               <div className="" />
             </motion.div>
