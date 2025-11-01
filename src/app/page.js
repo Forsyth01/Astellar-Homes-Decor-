@@ -9,6 +9,7 @@ import { FeaturedSection } from './components/FeaturedSection';
 import { BlogPostsSection } from './components/BlogPostsSection';
 import { CTASection } from './components/CTASection';
 import { Footer } from './components/Footer';
+import Navbar from './components/Navbar';
 
 const ModernFurnitureBlog = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -33,6 +34,7 @@ const ModernFurnitureBlog = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30 text-gray-900 overflow-hidden">
       <FloatingOrbs mousePosition={mousePosition} />
       {/* <Navigation /> */}
+      <Navbar/>
       <HeroSection scrollY={scrollY} />
       <FeaturedSection />
       <BlogPostsSection />

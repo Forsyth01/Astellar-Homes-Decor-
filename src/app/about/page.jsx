@@ -15,6 +15,7 @@ import {
   Quote
 } from "lucide-react";
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 export default function AboutPage() {
   const values = [
@@ -52,6 +53,8 @@ export default function AboutPage() {
   ];
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white border-b border-gray-100">
@@ -270,5 +273,6 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

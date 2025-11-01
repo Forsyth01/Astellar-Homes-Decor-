@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Calendar, Clock, ArrowRight, Search, X, Filter, Sparkles } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 // Create a client component that uses useSearchParams
 function BlogContent() {
@@ -156,6 +157,9 @@ function BlogContent() {
   }
 
   return (
+    <>
+    <Navbar/>
+
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50">
       {/* Dynamic Enhanced Header */}
       <div className="relative overflow-hidden bg-white border-b border-gray-100">
@@ -475,6 +479,7 @@ function BlogContent() {
         )}
       </div>
     </div>
+</>
   );
 }
 

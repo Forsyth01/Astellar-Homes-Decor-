@@ -4,7 +4,7 @@ import { ArrowRight, Home, Heart, Leaf } from 'lucide-react';
 
 export const HeroSection = ({ scrollY }) => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-6 pt-20">
+    <section className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20">
       <div 
         className="absolute inset-0 opacity-5"
         style={{
@@ -20,7 +20,7 @@ export const HeroSection = ({ scrollY }) => {
             transform: `translateY(${scrollY * 0.3}px)`
           }}
         >
-          <div className="absolute -top-20 left-10 animate-float">
+          <div className="absolute -top-18 left-10 animate-float">
             <div className="bg-gradient-to-br from-amber-100 to-orange-100 p-4 rounded-2xl shadow-xl">
               <Home className="text-amber-600" size={32} />
             </div>
@@ -53,7 +53,8 @@ export const HeroSection = ({ scrollY }) => {
             From cozy interiors and DIY projects to eco-friendly living and stylish home offices.
           </p>
 
-          {/* <div className="flex gap-4 justify-center">
+          {/* CTA Buttons */}
+          <div className="flex gap-4 justify-center mb-16">
             <button className="group bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-full hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
               Explore Ideas
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
@@ -61,15 +62,16 @@ export const HeroSection = ({ scrollY }) => {
             <button className="bg-white/80 backdrop-blur text-gray-800 px-8 py-4 rounded-full border-2 border-gray-200 hover:border-amber-600 hover:shadow-xl transition-all">
               Latest Posts
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
 
-    {  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+      {/* Bouncy scroll indicator - now below buttons */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center pt-2">
           <div className="w-1.5 h-2 bg-amber-600 rounded-full" />
         </div>
-      </div>}
+      </div>
     </section>
   );
 };
