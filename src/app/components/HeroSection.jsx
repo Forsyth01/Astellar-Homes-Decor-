@@ -40,7 +40,7 @@ export const HeroSection = ({ scrollY }) => {
             <span className="text-amber-700 font-semibold text-sm">✨ Where Design Meets Everyday Life</span>
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tighter tracking-tight">
             <span className="bg-gradient-to-r from-gray-900 via-amber-900 to-orange-900 bg-clip-text text-transparent">
               Beautiful Spaces
             </span>
@@ -53,7 +53,7 @@ export const HeroSection = ({ scrollY }) => {
             From cozy interiors and DIY projects to eco-friendly living and stylish home offices.
           </p>
 
-          <div className="flex gap-4 justify-center">
+          {/* <div className="flex gap-4 justify-center">
             <button className="group bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-full hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
               Explore Ideas
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
@@ -61,15 +61,15 @@ export const HeroSection = ({ scrollY }) => {
             <button className="bg-white/80 backdrop-blur text-gray-800 px-8 py-4 rounded-full border-2 border-gray-200 hover:border-amber-600 hover:shadow-xl transition-all">
               Latest Posts
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+    {  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center pt-2">
           <div className="w-1.5 h-2 bg-amber-600 rounded-full" />
         </div>
-      </div>
+      </div>}
     </section>
   );
 };
