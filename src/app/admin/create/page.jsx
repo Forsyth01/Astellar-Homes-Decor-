@@ -479,33 +479,37 @@ export default function CreateBlog() {
                   />
                 </label>
               ) : (
-                <div className="relative group">
-                  <div className="relative w-full h-48 sm:h-80 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                    <Image
-                      src={image}
-                      alt="Blog Cover"
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
-                  </div>
-                  <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-2 flex-col sm:flex-row">
-                    <label className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-gray-900 px-3 py-1 sm:px-4 sm:py-2 rounded-lg font-medium shadow-lg cursor-pointer transition-all hover:scale-105 text-xs sm:text-sm">
-                      Change
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleCoverImageUpload}
-                        className="hidden"
+                <div className="flex flex-col items-center">
+                  {/* Card-style preview */}
+                  <div className="relative w-full max-w-md group">
+                    <div className="relative w-full h-48 rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                      <Image
+                        src={image}
+                        alt="Blog Cover"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                    </label>
-                    <button
-                      onClick={() => setImage("")}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg font-medium shadow-lg transition-all hover:scale-105 text-xs sm:text-sm"
-                    >
-                      Remove
-                    </button>
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+                    </div>
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <label className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-gray-900 px-3 py-1 rounded-lg font-medium shadow-lg cursor-pointer transition-all hover:scale-105 text-xs">
+                        Change
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCoverImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      <button
+                        onClick={() => setImage("")}
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg font-medium shadow-lg transition-all hover:scale-105 text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
+                  <p className="text-xs text-gray-500 mt-2">Cover image preview</p>
                 </div>
               )}
             </div>
@@ -583,7 +587,7 @@ export default function CreateBlog() {
                 {image && (
                   <div>
                     <p className="text-sm text-gray-500 mb-2 font-medium">Cover Image</p>
-                    <div className="relative w-full h-20 sm:h-24 rounded-lg overflow-hidden border border-gray-200">
+                    <div className="relative w-full h-20 sm:h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                       <Image
                         src={image}
                         alt="Preview"
@@ -640,38 +644,7 @@ export default function CreateBlog() {
             </div>
 
             {/* Tips Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
-              <h4 className="text-sm font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-600" />
-                Writing Tips
-              </h4>
-              <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-600">
-                <div className="flex items-start gap-2">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-xs font-semibold text-amber-600">1</span>
-                  </div>
-                  <p>Start with a compelling hook to grab attention</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-xs font-semibold text-amber-600">2</span>
-                  </div>
-                  <p>Use high-quality, relevant images</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-xs font-semibold text-amber-600">3</span>
-                  </div>
-                  <p>Break content with subheadings and lists</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-xs font-semibold text-amber-600">4</span>
-                  </div>
-                  <p>Mark exceptional posts as favorites for featured display</p>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
