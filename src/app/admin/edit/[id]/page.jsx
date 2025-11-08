@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc, collection, getDocs, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, getDocs, serverTimestamp, addDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
@@ -22,7 +22,8 @@ import {
   CheckCircle,
   Plus,
   X,
-  Star
+  Star,
+  FileEdit
 } from "lucide-react";
 
 export default function EditBlog() {
@@ -37,11 +38,13 @@ export default function EditBlog() {
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishDate, setPublishDate] = useState(new Date().toISOString().split('T')[0]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [fetchingBlog, setFetchingBlog] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState("published"); // Track current status
 
   // Fetch categories from Firebase
   useEffect(() => {
@@ -78,9 +81,10 @@ export default function EditBlog() {
           setTitle(data.title);
           setExcerpt(data.excerpt || "");
           setCategory(data.category || "");
-          setImage(data.image);
+          setImage(data.image || "");
           setContent(data.content);
           setIsFavorite(data.isFavorite || false);
+          setCurrentStatus(data.status || "published");
           if (data.publishedAt?.toDate) {
             setPublishDate(data.publishedAt.toDate().toISOString().split('T')[0]);
           }
@@ -166,7 +170,6 @@ export default function EditBlog() {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Check file type
     if (!file.type.startsWith('image/')) {
       alert("Please select an image file (JPEG, PNG, etc.)");
       return;
@@ -185,8 +188,51 @@ export default function EditBlog() {
     }
   };
 
-  const handleUpdate = async (e) => {
+  // Save as draft
+  const handleSaveDraft = async (e) => {
     e.preventDefault();
+    
+    if (!title || !content) {
+      alert("Please add at least a title and content to save as draft.");
+      return;
+    }
+
+    setSavingDraft(true);
+
+    try {
+      let finalCategory = category;
+
+      if (showCustomCategory && customCategory.trim()) {
+        finalCategory = await addCategoryToFirebase(customCategory.trim());
+      }
+
+      const blogRef = doc(db, "blogs", id);
+      await updateDoc(blogRef, {
+        title,
+        excerpt: excerpt || "",
+        category: finalCategory || "Uncategorized",
+        image: image || "",
+        content,
+        status: "draft",
+        isFavorite,
+        updatedAt: serverTimestamp(),
+      });
+
+      setCurrentStatus("draft");
+      alert("✅ Draft saved successfully!");
+      router.push("/admin");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      alert("Failed to save draft. Please try again.");
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  // Publish/Update post
+  const handlePublish = async (e) => {
+    e.preventDefault();
+    
     if (!title || !content || !image) {
       alert("Please fill all required fields: title, content, and cover image.");
       return;
@@ -203,21 +249,26 @@ export default function EditBlog() {
 
       if (!finalCategory) {
         alert("Please select or add a category.");
+        setLoading(false);
         return;
       }
 
       const blogRef = doc(db, "blogs", id);
-      await updateDoc(blogRef, {
+      const updateData = {
         title,
         excerpt,
         category: finalCategory,
         image,
         content,
         isFavorite,
-        publishedAt: new Date(publishDate),
+        status: "published",
         updatedAt: serverTimestamp(),
-      });
+        publishedAt: new Date(publishDate),
+      };
 
+      await updateDoc(blogRef, updateData);
+
+      setCurrentStatus("published");
       alert("🎉 Blog post updated successfully!");
       router.push("/admin");
     } catch (error) {
@@ -229,6 +280,7 @@ export default function EditBlog() {
   };
 
   const isFormValid = title && content && image && category;
+  const isDraftValid = title && content;
 
   const addCustomCategory = async () => {
     if (customCategory.trim()) {
@@ -243,7 +295,6 @@ export default function EditBlog() {
     }
   };
 
-  // Function to toggle favorite status
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
@@ -283,7 +334,9 @@ export default function EditBlog() {
                 </div>
                 <div className="hidden sm:block">
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900">Edit Story</h1>
-                  <p className="text-xs sm:text-sm text-gray-500">Update your design inspiration</p>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    {currentStatus === "draft" ? "Edit your draft" : "Update your design inspiration"}
+                  </p>
                 </div>
                 <div className="sm:hidden">
                   <h1 className="text-base font-bold text-gray-900">Edit Story</h1>
@@ -304,9 +357,36 @@ export default function EditBlog() {
               >
                 <Star className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
-              
+
+              {/* Save Draft Button */}
               <button
-                onClick={handleUpdate}
+                onClick={handleSaveDraft}
+                disabled={savingDraft || !isDraftValid}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
+                  savingDraft
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : !isDraftValid
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-600 text-white hover:bg-gray-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                }`}
+              >
+                {savingDraft ? (
+                  <>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Save Draft</span>
+                    <span className="sm:hidden">Draft</span>
+                  </>
+                )}
+              </button>
+              
+              {/* Publish/Update Button */}
+              <button
+                onClick={handlePublish}
                 disabled={loading || !isFormValid}
                 className={`px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-white transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
                   loading
@@ -319,13 +399,25 @@ export default function EditBlog() {
                 {loading ? (
                   <>
                     <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span className="hidden sm:inline">Updating...</span>
+                    <span className="hidden sm:inline">
+                      {currentStatus === "draft" ? "Publishing..." : "Updating..."}
+                    </span>
                   </>
                 ) : (
                   <>
-                    <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Update</span>
-                    <span className="sm:hidden">Save</span>
+                    {currentStatus === "draft" ? (
+                      <>
+                        <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Publish</span>
+                        <span className="sm:hidden">Post</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Update</span>
+                        <span className="sm:hidden">Save</span>
+                      </>
+                    )}
                   </>
                 )}
               </button>
@@ -339,6 +431,19 @@ export default function EditBlog() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Main Editor Area */}
           <div className="lg:col-span-3 space-y-6">
+            {/* Status Badge */}
+            {currentStatus === "draft" && (
+              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex items-center gap-3">
+                <div className="bg-orange-100 p-2 rounded-lg">
+                  <FileEdit className="w-5 h-5 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-orange-900">Editing Draft</p>
+                  <p className="text-xs text-orange-700">This post is not yet published. Complete all required fields and click "Publish" when ready.</p>
+                </div>
+              </div>
+            )}
+
             {/* Title Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-all">
               <div className="flex items-center gap-3 mb-4 sm:mb-6">
@@ -494,7 +599,6 @@ export default function EditBlog() {
                 </label>
               ) : (
                 <div className="flex flex-col items-center">
-                  {/* Card-style preview */}
                   <div className="relative w-full max-w-md group">
                     <div className="relative w-full h-48 rounded-xl overflow-hidden shadow-lg border border-gray-200">
                       <Image
@@ -551,7 +655,6 @@ export default function EditBlog() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Preview Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 sticky top-24">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
                 <Eye className="w-5 h-5 text-amber-600" />
@@ -559,6 +662,19 @@ export default function EditBlog() {
               </h3>
               
               <div className="space-y-4 sm:space-y-6">
+                {/* Current Status */}
+                <div>
+                  <p className="text-sm text-gray-500 mb-2 font-medium">Current Status</p>
+                  <div className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-medium border ${
+                    currentStatus === "published"
+                      ? 'bg-green-50 text-green-700 border-green-200' 
+                      : 'bg-orange-50 text-orange-700 border-orange-200'
+                  }`}>
+                    {currentStatus === "published" ? <CheckCircle className="w-3 h-3" /> : <FileEdit className="w-3 h-3" />}
+                    {currentStatus === "published" ? 'Published' : 'Draft'}
+                  </div>
+                </div>
+
                 {/* Favorite Status */}
                 <div>
                   <p className="text-sm text-gray-500 mb-2 font-medium">Favorite Status</p>
@@ -618,9 +734,13 @@ export default function EditBlog() {
                     <p className="text-sm font-semibold text-gray-900">Status</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${isFormValid ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`} />
+                    <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${isFormValid ? 'bg-green-500 animate-pulse' : isDraftValid ? 'bg-yellow-500' : 'bg-amber-500'}`} />
                     <p className="text-xs sm:text-sm text-gray-700">
-                      {isFormValid ? "Ready to update" : "Incomplete"}
+                      {isFormValid 
+                        ? currentStatus === "draft" ? "Ready to publish" : "Ready to update"
+                        : isDraftValid 
+                        ? "Can save as draft" 
+                        : "Incomplete"}
                     </p>
                   </div>
                 </div>
@@ -630,16 +750,24 @@ export default function EditBlog() {
               <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
                 <h4 className="text-sm font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
-                  Update Checklist
+                  {currentStatus === "draft" ? "Publishing Checklist" : "Update Checklist"}
                 </h4>
                 <div className="space-y-2 sm:space-y-3">
-                  <ChecklistItem checked={!!title} label="Add a compelling title" />
+                  <ChecklistItem checked={!!title} label="Add a compelling title" required />
+                  <ChecklistItem checked={!!content} label="Write story content" required />
                   <ChecklistItem checked={!!image} label="Upload cover image" />
-                  <ChecklistItem checked={!!content} label="Write story content" />
                   <ChecklistItem checked={!!category} label="Choose category" />
                   <ChecklistItem checked={!!excerpt} label="Add excerpt (optional)" />
                   <ChecklistItem checked={isFavorite} label="Mark as favorite (optional)" />
                 </div>
+                
+                {currentStatus === "draft" && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-blue-700">
+                      <strong>Tip:</strong> Items marked with "required" must be completed to publish. You can save as draft anytime with just title and content.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Publish Date */}
@@ -656,7 +784,6 @@ export default function EditBlog() {
                 />
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -664,7 +791,7 @@ export default function EditBlog() {
   );
 }
 
-function ChecklistItem({ checked, label }) {
+function ChecklistItem({ checked, label, required }) {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
@@ -677,7 +804,7 @@ function ChecklistItem({ checked, label }) {
         )}
       </div>
       <span className={`text-xs sm:text-sm transition-colors ${checked ? 'text-gray-700 font-medium' : 'text-gray-500'}`}>
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
       </span>
     </div>
   );

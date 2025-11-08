@@ -174,18 +174,6 @@ export default function BlogDetails() {
 
           {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-6 py-6 border-y border-gray-200">
-            {/* <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  <User className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">Design Team</p>
-                  <p className="text-gray-600 text-sm">Interior Design Experts</p>
-                </div>
-              </div>
-            </div> */}
-
             <div className="flex items-center gap-4 text-gray-600">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
@@ -209,26 +197,27 @@ export default function BlogDetails() {
         <div
           className="prose prose-lg max-w-none
             [&>*]:text-gray-900
-            [&_h2]:text-gray-900 [&_h2]:font-bold [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:mt-16 [&_h2]:mb-6 [&_h2]:leading-tight [&_h2]:break-words
-            [&_h3]:text-gray-900 [&_h3]:font-bold [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:mt-12 [&_h3]:mb-4 [&_h3]:leading-snug [&_h3]:break-words
-            [&_p]:text-gray-900 [&_p]:leading-relaxed [&_p]:mb-8 [&_p]:text-lg [&_p]:break-words [&_p]:whitespace-pre-wrap
+            [&_h2]:text-gray-900 [&_h2]:font-bold [&_h2]:text-2xl sm:[&_h2]:text-3xl [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:leading-tight [&_h2]:break-words
+            [&_h3]:text-gray-900 [&_h3]:font-bold [&_h3]:text-xl sm:[&_h3]:text-2xl [&_h3]:mt-10 [&_h3]:mb-3 [&_h3]:leading-snug [&_h3]:break-words
+            [&_h4]:text-gray-900 [&_h4]:font-semibold [&_h4]:text-lg sm:[&_h4]:text-xl [&_h4]:mt-8 [&_h4]:mb-2 [&_h4]:leading-normal
+            [&_p]:text-gray-900 [&_p]:leading-[1.7] [&_p]:mb-5 [&_p]:text-base sm:[&_p]:text-lg [&_p]:break-words [&_p]:whitespace-pre-wrap
             [&_a]:text-amber-600 [&_a]:no-underline [&_a]:font-medium hover:[&_a]:underline [&_a]:break-all
             [&_strong]:text-gray-900 [&_strong]:font-semibold
             [&_em]:text-gray-900 [&_em]:italic
-            [&_ul]:my-8 [&_ul]:space-y-4
-            [&_ol]:my-8 [&_ol]:space-y-4
-            [&_li]:text-gray-900 [&_li]:leading-relaxed [&_li]:break-words
-            [&_blockquote]:border-l-4 [&_blockquote]:border-amber-500 [&_blockquote]:pl-6 [&_blockquote]:py-4 [&_blockquote]:my-8 [&_blockquote]:italic [&_blockquote]:text-gray-900 [&_blockquote]:bg-amber-50 [&_blockquote]:rounded-r-lg
+            [&_ul]:my-6 [&_ul]:space-y-2
+            [&_ol]:my-6 [&_ol]:space-y-2
+            [&_li]:text-gray-900 [&_li]:leading-[1.7] [&_li]:break-words
+            [&_blockquote]:border-l-4 [&_blockquote]:border-amber-500 [&_blockquote]:pl-6 [&_blockquote]:py-3 [&_blockquote]:my-6 [&_blockquote]:italic [&_blockquote]:text-gray-900 [&_blockquote]:bg-amber-50 [&_blockquote]:rounded-r-lg [&_blockquote]:leading-[1.7]
             [&_code]:text-amber-700 [&_code]:bg-amber-50 [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono [&_code]:break-all
-            [&_pre]:bg-gray-900 [&_pre]:text-gray-100 [&_pre]:p-6 [&_pre]:rounded-xl [&_pre]:my-8 [&_pre]:overflow-x-auto [&_pre]:max-w-full [&_pre]:whitespace-pre-wrap [&_pre]:break-words
+            [&_pre]:bg-gray-900 [&_pre]:text-gray-100 [&_pre]:p-6 [&_pre]:rounded-xl [&_pre]:my-6 [&_pre]:overflow-x-auto [&_pre]:max-w-full [&_pre]:whitespace-pre-wrap [&_pre]:break-words
             [&_pre_code]:bg-transparent [&_pre_code]:text-gray-100 [&_pre_code]:p-0 [&_pre_code]:whitespace-pre-wrap [&_pre_code]:break-words
-            [&_img]:rounded-xl [&_img]:my-8 [&_img]:shadow-md [&_img]:max-w-full [&_img]:h-auto
-            [&_figure]:my-8 [&_figure]:max-w-full
+            [&_img]:rounded-xl [&_img]:my-6 [&_img]:shadow-md [&_img]:max-w-full [&_img]:h-auto
+            [&_figure]:my-6 [&_figure]:max-w-full
             [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:text-gray-600 [&_figcaption]:mt-3 [&_figcaption]:italic [&_figcaption]:break-words
-            [&_table]:w-full [&_table]:my-8 [&_table]:border-collapse
-            [&_th]:bg-gray-100 [&_th]:text-gray-900 [&_th]:font-semibold [&_th]:p-4 [&_th]:text-left [&_th]:border [&_th]:border-gray-300
-            [&_td]:text-gray-900 [&_td]:p-4 [&_td]:border [&_td]:border-gray-300 [&_td]:break-words
-            [&_hr]:my-12 [&_hr]:border-gray-300"
+            [&_table]:w-full [&_table]:my-6 [&_table]:border-collapse
+            [&_th]:bg-gray-100 [&_th]:text-gray-900 [&_th]:font-semibold [&_th]:p-3 [&_th]:text-left [&_th]:border [&_th]:border-gray-300
+            [&_td]:text-gray-900 [&_td]:p-3 [&_td]:border [&_td]:border-gray-300 [&_td]:break-words
+            [&_hr]:my-10 [&_hr]:border-gray-300"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         />
 

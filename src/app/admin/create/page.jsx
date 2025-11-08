@@ -1,7 +1,8 @@
+// app/admin/create/page.jsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, addDoc, serverTimestamp, getDocs, doc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, getDocs, doc, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
 import Editor from "@/app/components/Editor";
@@ -21,7 +22,8 @@ import {
   CheckCircle,
   Plus,
   X,
-  Star
+  Star,
+  FileEdit
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -36,6 +38,7 @@ export default function CreateBlog() {
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [publishDate, setPublishDate] = useState(new Date().toISOString().split('T')[0]);
   const [loadingCategories, setLoadingCategories] = useState(true);
@@ -117,7 +120,6 @@ export default function CreateBlog() {
     }
   };
 
-  // ✅ FIXED: Correct Cloudinary URL
   const handleImageUpload = async (file) => {
     if (file.size > 10 * 1024 * 1024) {
       alert("File size too large. Please choose an image under 10MB.");
@@ -156,12 +158,10 @@ export default function CreateBlog() {
     }
   };
 
-  // ✅ IMPROVED: Better error handling
   const handleCoverImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Check file type
     if (!file.type.startsWith('image/')) {
       alert("Please select an image file (JPEG, PNG, etc.)");
       return;
@@ -180,8 +180,53 @@ export default function CreateBlog() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  // Save as draft
+  const handleSaveDraft = async (e) => {
     e.preventDefault();
+    
+    if (!title || !content) {
+      alert("Please add at least a title and content to save as draft.");
+      return;
+    }
+
+    setSavingDraft(true);
+
+    try {
+      let finalCategory = category;
+
+      if (showCustomCategory && customCategory.trim()) {
+        finalCategory = await addCategoryToFirebase(customCategory.trim());
+      }
+
+      const blogData = {
+        title,
+        excerpt: excerpt || "",
+        category: finalCategory || "Uncategorized",
+        image: image || "",
+        content,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        status: "draft",
+        views: 0,
+        isFavorite: isFavorite
+      };
+
+      await addDoc(collection(db, "blogs"), blogData);
+
+      alert("✅ Draft saved successfully!");
+      router.push("/admin");
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      alert("Failed to save draft. Please try again.");
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  // Publish post
+  const handlePublish = async (e) => {
+    e.preventDefault();
+    
     if (!title || !content || !image) {
       alert("Please fill all required fields: title, content, and cover image.");
       return;
@@ -198,6 +243,7 @@ export default function CreateBlog() {
 
       if (!finalCategory) {
         alert("Please select or add a category.");
+        setLoading(false);
         return;
       }
 
@@ -211,7 +257,7 @@ export default function CreateBlog() {
         publishedAt: new Date(publishDate),
         status: "published",
         views: 0,
-        isFavorite: isFavorite // Add favorite status to the blog post
+        isFavorite: isFavorite
       };
 
       const docRef = await addDoc(collection(db, "blogs"), blogData);
@@ -229,6 +275,7 @@ export default function CreateBlog() {
   };
 
   const isFormValid = title && content && image && category;
+  const isDraftValid = title && content;
 
   const addCustomCategory = async () => {
     if (customCategory.trim()) {
@@ -243,7 +290,6 @@ export default function CreateBlog() {
     }
   };
 
-  // Function to toggle favorite status
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
@@ -290,9 +336,36 @@ export default function CreateBlog() {
               >
                 <Star className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
-                         
+
+              {/* Save Draft Button */}
               <button
-                onClick={handleSubmit}
+                onClick={handleSaveDraft}
+                disabled={savingDraft || !isDraftValid}
+                className={`px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
+                  savingDraft
+                    ? "bg-gray-400 text-white cursor-not-allowed"
+                    : !isDraftValid
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-600 text-white hover:bg-gray-700 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                }`}
+              >
+                {savingDraft ? (
+                  <>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileEdit className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Save Draft</span>
+                    <span className="sm:hidden">Draft</span>
+                  </>
+                )}
+              </button>
+                         
+              {/* Publish Button */}
+              <button
+                onClick={handlePublish}
                 disabled={loading || !isFormValid}
                 className={`px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-white transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
                   loading
@@ -480,7 +553,6 @@ export default function CreateBlog() {
                 </label>
               ) : (
                 <div className="flex flex-col items-center">
-                  {/* Card-style preview */}
                   <div className="relative w-full max-w-md group">
                     <div className="relative w-full h-48 rounded-xl overflow-hidden shadow-lg border border-gray-200">
                       <Image
@@ -537,7 +609,6 @@ export default function CreateBlog() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Preview Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 sticky top-24">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
                 <Eye className="w-5 h-5 text-amber-600" />
@@ -604,9 +675,9 @@ export default function CreateBlog() {
                     <p className="text-sm font-semibold text-gray-900">Status</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${isFormValid ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`} />
+                    <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${isFormValid ? 'bg-green-500 animate-pulse' : isDraftValid ? 'bg-yellow-500' : 'bg-amber-500'}`} />
                     <p className="text-xs sm:text-sm text-gray-700">
-                      {isFormValid ? "Ready to publish" : "Incomplete"}
+                      {isFormValid ? "Ready to publish" : isDraftValid ? "Can save as draft" : "Incomplete"}
                     </p>
                   </div>
                 </div>
@@ -619,12 +690,18 @@ export default function CreateBlog() {
                   Publishing Checklist
                 </h4>
                 <div className="space-y-2 sm:space-y-3">
-                  <ChecklistItem checked={!!title} label="Add a compelling title" />
+                  <ChecklistItem checked={!!title} label="Add a compelling title" required />
+                  <ChecklistItem checked={!!content} label="Write story content" required />
                   <ChecklistItem checked={!!image} label="Upload cover image" />
-                  <ChecklistItem checked={!!content} label="Write story content" />
                   <ChecklistItem checked={!!category} label="Choose category" />
                   <ChecklistItem checked={!!excerpt} label="Add excerpt (optional)" />
                   <ChecklistItem checked={isFavorite} label="Mark as favorite (optional)" />
+                </div>
+                
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-xs text-blue-700">
+                    <strong>Tip:</strong> Items marked with "required" must be completed to publish. You can save as draft anytime with just title and content.
+                  </p>
                 </div>
               </div>
 
@@ -642,9 +719,6 @@ export default function CreateBlog() {
                 />
               </div>
             </div>
-
-            {/* Tips Card */}
-            
           </div>
         </div>
       </div>
@@ -652,7 +726,7 @@ export default function CreateBlog() {
   );
 }
 
-function ChecklistItem({ checked, label }) {
+function ChecklistItem({ checked, label, required }) {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-lg border-2 flex items-center justify-center transition-all ${
@@ -665,7 +739,7 @@ function ChecklistItem({ checked, label }) {
         )}
       </div>
       <span className={`text-xs sm:text-sm transition-colors ${checked ? 'text-gray-700 font-medium' : 'text-gray-500'}`}>
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
       </span>
     </div>
   );
